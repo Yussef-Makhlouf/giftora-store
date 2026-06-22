@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120" fill="none">
+  <rect width="200" height="120" rx="12" fill="#1A5C3A"/>
+  <text x="100" y="48" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold" font-size="28" fill="white" letter-spacing="4">KNET</text>
+  <text x="100" y="82" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold" font-size="12" fill="rgba(255,255,255,0.6)" letter-spacing="3">PAYMENT</text>
+</svg>
