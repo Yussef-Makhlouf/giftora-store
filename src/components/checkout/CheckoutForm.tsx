@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { CreditCardInput } from './CreditCardInput'
 import { PaymentLogos } from './PaymentLogos'
+import { PromoCode } from './PromoCode'
 import { ChevronLeft, ChevronRight, Shield, Truck, RotateCcw, Check } from 'lucide-react'
 import Link from 'next/link'
 import { useCart } from '@/lib/cart-context'
@@ -37,9 +38,16 @@ export function CheckoutForm({ onSubmit, onBack }: CheckoutFormProps) {
     paymentMethod: 'card',
   })
   const [cardValid, setCardValid] = useState(false)
+  const [promoCode, setPromoCode] = useState<string | null>(null)
+  const [promoDiscount, setPromoDiscount] = useState(0)
 
   const shipping = total >= 30 ? 0 : 2
-  const grandTotal = total + shipping
+  const discountAmount = promoDiscount > 0
+    ? promoDiscount >= 100
+      ? promoDiscount  // fixed KD amount
+      : parseFloat(((total * promoDiscount) / 100).toFixed(3))  // percentage
+    : 0
+  const grandTotal = Math.max(0, total + shipping - discountAmount)
 
   const updateField = (field: keyof CheckoutFormData, value: string | PaymentMethod) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
@@ -410,6 +418,23 @@ export function CheckoutForm({ onSubmit, onBack }: CheckoutFormProps) {
             )}
           </div>
 
+          {/* Promo Code */}
+          <div className="mb-4 sm:mb-5">
+            <p className="text-[10px] sm:text-xs font-medium uppercase tracking-[0.1em] text-text-muted mb-2">Promo Code</p>
+            <PromoCode
+              appliedCode={promoCode}
+              discountAmount={discountAmount}
+              onApply={(discount, code) => {
+                setPromoCode(code)
+                setPromoDiscount(discount)
+              }}
+              onRemove={() => {
+                setPromoCode(null)
+                setPromoDiscount(0)
+              }}
+            />
+          </div>
+
           <div className="space-y-2 sm:space-y-3 text-xs sm:text-sm pb-4 sm:pb-6 border-b border-border">
             <div className="flex justify-between">
               <span className="text-text-secondary">Subtotal</span>
@@ -421,6 +446,12 @@ export function CheckoutForm({ onSubmit, onBack }: CheckoutFormProps) {
                 {shipping === 0 ? 'Free' : `${shipping} KD`}
               </span>
             </div>
+            {discountAmount > 0 && (
+              <div className="flex justify-between text-success animate-fade-in-up">
+                <span>Promo ({promoCode})</span>
+                <span className="font-semibold">-{discountAmount} KD</span>
+              </div>
+            )}
           </div>
 
           <div className="flex justify-between items-center pt-4 sm:pt-6 mb-4 sm:mb-6">

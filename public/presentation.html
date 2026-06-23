@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Giftora — QMIS 351 Final Presentation</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #1C1410;
+      --dusty-rose: #C17A67;
+      --bronze: #A67C52;
+      --sand: #F5F0E8;
+      --sand-light: #FAF7F2;
+      --white: #FFFBF7;
+      --success: #4CAF50;
+      --accent: #E8B4A0;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #111;
+      color: var(--ink);
+      overflow: hidden;
+    }
+
+    .presentation {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: none;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    .slide.active {
+      display: flex;
+      flex-direction: column;
+      opacity: 1;
+    }
+
+    /* ── Navigation ── */
+    .nav {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(28,20,16,0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 10px 20px;
+      border-radius: 50px;
+      z-index: 100;
+    }
+    .nav button {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 18px;
+      cursor: pointer;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .nav button:hover { background: rgba(255,255,255,0.1); }
+    .nav .counter {
+      color: rgba(255,255,255,0.6);
+      font-size: 12px;
+      font-weight: 500;
+      min-width: 50px;
+      text-align: center;
+    }
+    .nav .dots {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.25);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .dot.active {
+      background: var(--dusty-rose);
+      width: 20px;
+      border-radius: 3px;
+    }
+
+    /* ── SLIDE 1 — Cover ── */
+    .slide-cover {
+      background: var(--ink);
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .slide-cover::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(193,122,103,0.25) 0%, transparent 70%);
+    }
+    .cover-tag {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--dusty-rose);
+      margin-bottom: 16px;
+    }
+    .cover-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(48px, 8vw, 96px);
+      color: #fff;
+      line-height: 1.05;
+      margin-bottom: 24px;
+    }
+    .cover-title em {
+      font-style: italic;
+      color: var(--dusty-rose);
+    }
+    .cover-sub {
+      font-size: 14px;
+      color: rgba(255,255,255,0.45);
+      max-width: 480px;
+      line-height: 1.7;
+      margin: 0 auto 40px;
+    }
+    .cover-badges {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .badge {
+      padding: 6px 16px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 50px;
+      font-size: 11px;
+      color: rgba(255,255,255,0.6);
+      letter-spacing: 0.05em;
+    }
+    .cover-deco {
+      position: absolute;
+      font-size: 180px;
+      opacity: 0.03;
+      user-select: none;
+    }
+    .cover-deco-tl { top: -20px; left: -30px; }
+    .cover-deco-br { bottom: -30px; right: -20px; transform: rotate(180deg); }
+
+    /* ── Shared layout ── */
+    .slide-inner {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      max-width: 1280px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 40px 60px 80px;
+    }
+    .slide-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 40px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(28,20,16,0.08);
+    }
+    .slide-number {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--dusty-rose);
+    }
+    .slide-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(28px, 4vw, 48px);
+      color: var(--ink);
+      line-height: 1.1;
+    }
+    .slide-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      color: var(--ink);
+      opacity: 0.3;
+    }
+
+    /* White light bg */
+    .bg-light { background: var(--sand-light); }
+    .bg-white { background: var(--white); }
+    .bg-dark { background: var(--ink); }
+
+    /* ── Cards / Grid ── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+
+    .card {
+      background: #fff;
+      border: 1px solid rgba(28,20,16,0.08);
+      border-radius: 16px;
+      padding: 24px;
+    }
+    .card-dark {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 24px;
+    }
+    .card-icon {
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
+    .card-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--bronze);
+      margin-bottom: 6px;
+    }
+    .card-value {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+    .card-desc {
+      font-size: 12px;
+      color: #6b6057;
+      line-height: 1.6;
+    }
+
+    /* ── Stat chips ── */
+    .stat-row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+    .stat-chip {
+      background: var(--ink);
+      color: #fff;
+      border-radius: 12px;
+      padding: 16px 24px;
+      text-align: center;
+      flex: 1;
+      min-width: 120px;
+    }
+    .stat-chip .val {
+      font-family: 'Playfair Display', serif;
+      font-size: 32px;
+      color: var(--dusty-rose);
+    }
+    .stat-chip .lbl {
+      font-size: 10px;
+      color: rgba(255,255,255,0.45);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    /* ── Table ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th {
+      text-align: left;
+      padding: 10px 14px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--bronze);
+      background: var(--sand);
+      border-bottom: 2px solid rgba(28,20,16,0.08);
+    }
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(28,20,16,0.05);
+      color: var(--ink);
+      vertical-align: top;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--sand-light); }
+    .td-bold { font-weight: 600; }
+    .td-kd {
+      font-family: 'Playfair Display', serif;
+      font-size: 15px;
+      color: var(--dusty-rose);
+      white-space: nowrap;
+    }
+
+    /* ── Budget bar ── */
+    .budget-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .budget-label { font-size: 12px; color: var(--ink); width: 180px; flex-shrink: 0; }
+    .budget-bar-wrap { flex: 1; height: 10px; background: rgba(28,20,16,0.08); border-radius: 5px; overflow: hidden; }
+    .budget-bar { height: 100%; border-radius: 5px; transition: width 1s ease; }
+    .budget-kd { font-size: 12px; font-weight: 600; color: var(--dusty-rose); white-space: nowrap; width: 70px; text-align: right; }
+
+    /* ── List ── */
+    .check-list { list-style: none; space-y: 8px; }
+    .check-list li {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      font-size: 13px;
+      color: #4a3f38;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(28,20,16,0.05);
+    }
+    .check-list li:last-child { border-bottom: none; }
+    .check-list li::before {
+      content: '✓';
+      color: var(--success);
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* ── Pill tag ── */
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 12px;
+      border-radius: 50px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .pill-rose { background: rgba(193,122,103,0.12); color: var(--dusty-rose); }
+    .pill-green { background: rgba(76,175,80,0.1); color: var(--success); }
+    .pill-ink { background: var(--ink); color: #fff; }
+
+    /* ── DFD diagram ── */
+    .dfd {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      flex: 1;
+    }
+    .dfd-entity {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .dfd-box {
+      padding: 14px 22px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      text-align: center;
+      min-width: 110px;
+    }
+    .dfd-ext { background: var(--ink); color: #fff; }
+    .dfd-proc { background: var(--dusty-rose); color: #fff; }
+    .dfd-db { background: var(--sand); border: 2px solid var(--bronze); color: var(--ink); }
+    .dfd-arrow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      padding: 0 8px;
+    }
+    .dfd-line {
+      height: 2px;
+      width: 50px;
+      background: rgba(28,20,16,0.2);
+    }
+    .dfd-arrow-label {
+      font-size: 9px;
+      color: #888;
+      text-align: center;
+      max-width: 60px;
+    }
+    .arrow-head { font-size: 14px; color: rgba(28,20,16,0.35); }
+
+    /* ── KPI chips (dark slide) ── */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .kpi {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 20px;
+    }
+    .kpi-icon { font-size: 24px; margin-bottom: 10px; }
+    .kpi-val {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      color: var(--dusty-rose);
+      margin-bottom: 2px;
+    }
+    .kpi-name { font-size: 11px; color: rgba(255,255,255,0.45); text-transform: uppercase; letter-spacing: 0.1em; }
+
+    @media (max-width: 768px) {
+      .slide-inner { padding: 24px 20px 80px; }
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="presentation" id="presentation">
+
+  <!-- ══════════════════════════════ SLIDE 1 — COVER ══════════════════════════════ -->
+  <div class="slide slide-cover active" id="slide-1">
+    <span class="cover-deco cover-deco-tl">🎁</span>
+    <span class="cover-deco cover-deco-br">🎁</span>
+    <div style="position:relative;z-index:1;padding:40px;max-width:700px;margin:auto;">
+      <div class="cover-tag">QMIS 351 — E-Commerce Project</div>
+      <h1 class="cover-title"><em>Giftora</em><br>Store</h1>
+      <p class="cover-sub">A premium B2C personalized gift shop based in Kuwait — curating thoughtful experiences for every occasion.</p>
+      <div class="cover-badges">
+        <span class="badge">🇰🇼 Kuwait-Based</span>
+        <span class="badge">B2C E-Commerce</span>
+        <span class="badge">Next.js · TypeScript</span>
+        <span class="badge">Deliverable 3 — July 19, 2026</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════ SLIDE 2 — BUSINESS OVERVIEW ══════════════════════════════ -->
+  <div class="slide bg-light" id="slide-2">
+    <div class="slide-inner">
+      <div class="slide-header">
+        <div>
+          <div class="slide-number">01 — Business Overview</div>
+          <div class="slide-title">Who Is Giftora?</div>
+        </div>
+        <div class="slide-logo">Giftora</div>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat-chip"><div class="val">22+</div><div class="lbl">Products</div></div>
+        <div class="stat-chip"><div class="val">B2C</div><div class="lbl">Model</div></div>
+        <div class="stat-chip"><div class="val">6</div><div class="lbl">Categories</div></div>
+        <div class="stat-chip"><div class="val">KD</div><div class="lbl">Currency</div></div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-icon">🎁</div>
+          <div class="card-label">Business Name</div>
+          <div class="card-value">Giftora</div>
+          <div class="card-desc">Kuwait's premier personalized gift store, offering curated gift boxes, mugs, notebooks, accessories, home decor, and stationery.</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">👥</div>
+          <div class="card-label">Target Customers</div>
+          <div class="card-value">Gift Buyers in Kuwait</div>
+          <div class="card-desc">Individuals aged 18–45 searching for meaningful, personalized gifts for birthdays, graduations, anniversaries, and corporate occasions.</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">💡</div>
+          <div class="card-label">Value Proposition</div>
+          <div class="card-value">Meaningful & Personal</div>
+          <div class="card-desc">Free engraving and personalization on selected items, premium packaging, next-day delivery across Kuwait, and an exceptional unboxing experience.</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🏆</div>
+          <div class="card-label">Competitive Advantage</div>
+          <div class="card-value">Personalization + Quality</div>
+          <div class="card-desc">Unlike generic gift shops, Giftora specializes in custom-engraved, premium-quality items with expert curation — justifying a higher price point and driving repeat purchases.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════ SLIDE 3 — BUSINESS & REVENUE MODEL ══════════════════════════════ -->
+  <div class="slide bg-white" id="slide-3">
+    <div class="slide-inner">
+      <div class="slide-header">
+        <div>
+          <div class="slide-number">02 — Business & Revenue Model</div>
+          <div class="slide-title">How Giftora Makes Money</div>
+        </div>
+        <div class="slide-logo">Giftora</div>
+      </div>
+
+      <div class="grid-2" style="flex:1;align-items:stretch;">
+        <div>
+          <div style="margin-bottom:24px;">
+            <div class="card-label" style="margin-bottom:12px;">E-Commerce Type</div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+              <span class="pill pill-ink">B2C</span>
+              <span class="pill pill-rose">M-Commerce</span>
+              <span class="pill pill-rose">Social Commerce</span>
+            </div>
+          </div>
+          <div class="card" style="margin-bottom:16px;">
+            <div class="card-label">Primary Revenue Model</div>
+            <div class="card-value" style="font-size:20px;">Sales Revenue</div>
+            <div class="card-desc" style="margin-top:8px;">Direct product sales through the online storefront. Each product sold generates immediate revenue. Personalization adds premium markup over standard retail.</div>
+          </div>
+          <div class="card">
+            <div class="card-label">Secondary Revenue Streams</div>
+            <ul class="check-list" style="margin-top:8px;">
+              <li>Corporate bulk orders (B2B adjacent)</li>
+              <li>Bundle promotions increasing Average Order Value</li>
+              <li>Affiliate / influencer referral partnerships</li>
+              <li>Seasonal discount campaigns driving volume</li>
+            </ul>
+          </div>
+        </div>
+        <div>
+          <div class="card-label" style="margin-bottom:12px;">How Customers Find Giftora</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div class="card" style="text-align:center;">
+              <div style="font-size:28px;margin-bottom:8px;">📸</div>
+              <div class="card-label">Instagram & TikTok</div>
+              <div class="card-desc">@giftora.kuwait — organic & paid campaigns</div>
+            </div>
+            <div class="card" style="text-align:center;">
+              <div style="font-size:28px;margin-bottom:8px;">🔍</div>
+              <div class="card-label">Google Search</div>
+              <div class="card-desc">SEO-optimized pages for gift-related keywords</div>
+            </div>
+            <div class="card" style="text-align:center;">
+              <div style="font-size:28px;margin-bottom:8px;">🤝</div>
+              <div class="card-label">Influencers</div>
+              <div class="card-desc">Kuwaiti lifestyle influencers & unboxing creators</div>
+            </div>
+            <div class="card" style="text-align:center;">
+              <div style="font-size:28px;margin-bottom:8px;">💬</div>
+              <div class="card-label">Word of Mouth</div>
+              <div class="card-desc">Customer reviews and referral recommendations</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════ SLIDE 4 — WEBSITE DEMO ══════════════════════════════ -->
+  <div class="slide bg-light" id="slide-4">
+    <div class="slide-inner">
+      <div class="slide-header">
+        <div>
+          <div class="slide-number">03 — Website Demo</div>
+          <div class="slide-title">Live at localhost:3000</div>
+        </div>
+        <div class="slide-logo">Giftora</div>
+      </div>
+
+      <div class="grid-3" style="margin-bottom:20px;">
+        <div class="card">
+          <div class="card-label">Pages Included</div>
+          <ul class="check-list" style="margin-top:10px;">
+            <li>Homepage — Hero + Featured</li>
+            <li>Shop — Filtered Product Grid</li>
+            <li>Product Details + Reviews</li>
+            <li>Shopping Cart</li>
+            <li>Checkout (3 steps)</li>
+            <li>Order Confirmation</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-label">Business Pages</div>
+          <ul class="check-list" style="margin-top:10px;">
+            <li>About Us</li>
+            <li>Contact Form</li>
+            <li>Shipping Information</li>
+            <li>Returns & Refund Policy</li>
+            <li>Privacy Policy</li>
+            <li>Admin Dashboard</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-label">Key Features</div>
+          <ul class="check-list" style="margin-top:10px;">
+            <li>22+ Products with images</li>
+            <li>Product Personalization input</li>
+            <li>3 Payment Methods (K-Net, Card, COD)</li>
+            <li>Promo Code system</li>
+            <li>Customer Reviews & Ratings</li>
+            <li>100% Mobile Responsive</li>
+          </ul>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <span class="pill pill-rose">✓ 10+ Products Required</span>
+        <span class="pill pill-rose">✓ Cart + Checkout</span>
+        <span class="pill pill-rose">✓ Payment Options</span>
+        <span class="pill pill-rose">✓ Delivery Info</span>
+        <span class="pill pill-rose">✓ Contact Page</span>
+        <span class="pill pill-rose">✓ About Us</span>
+        <span class="pill pill-rose">✓ Return Policy</span>
+        <span class="pill pill-rose">✓ Privacy Policy</span>
+        <span class="pill pill-rose">✓ Mobile-Friendly</span>
+        <span class="pill pill-green">✓ Admin Dashboard</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════ SLIDE 5 — SYSTEM FUNCTIONALITIES ══════════════════════════════ -->
+  <div class="slide bg-white" id="slide-5">
+    <div class="slide-inner">
+      <div class="slide-header">
+        <div>
+          <div class="slide-number">04 — System Functionalities</div>
+          <div class="slide-title">How the System Works</div>
+        </div>
+        <div class="slide-logo">Giftora</div>
+      </div>
+
+      <div style="overflow:auto;flex:1;">
+        <table>
+          <thead>
+            <tr>
+              <th>Functionality</th>
+              <th>What It Does</th>
+              <th>Why Important</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="td-bold">🛍 Browse Products</td><td>Product catalog in a responsive grid with category filters</td><td>First point of contact — drives purchase decisions</td></tr>
+            <tr><td class="td-bold">🔍 Search & Filter</td><td>Keyword search + category and price range filters</td><td>Reduces friction; increases conversion rate</td></tr>
+            <tr><td class="td-bold">✏️ Personalization</td><td>Custom text input (50 chars) for engraving/printing</td><td>Core value proposition — differentiates Giftora</td></tr>
+            <tr><td class="td-bold">🛒 Cart Management</td><td>Add/update/remove items; persisted in localStorage</td><td>Enables upsell; prevents cart abandonment</td></tr>
+            <tr><td class="td-bold">💳 Checkout (3-step)</td><td>Shipping → Payment → Review → Confirm</td><td>Converts intent into closed sales</td></tr>
+            <tr><td class="td-bold">💰 Payments</td><td>K-Net, Credit/Debit Card, Cash on Delivery, Bank Transfer</td><td>Accommodates all Kuwaiti payment preferences</td></tr>
+            <tr><td class="td-bold">📦 Order Tracking</td><td>Status updates: Pending → Processing → Shipped → Delivered</td><td>Reduces post-purchase support load</td></tr>
+            <tr><td class="td-bold">⭐ Reviews & Ratings</td><td>Star ratings + written reviews + verified buyer badge</td><td>Social proof increases conversion</td></tr>
+            <tr><td class="td-bold">🏷 Promo Codes</td><td>Discount codes (%, fixed) applied at checkout</td><td>Drives first purchases and campaign ROI</td></tr>
+            <tr><td class="td-bold">📊 Admin Dashboard</td><td>Sales metrics, order queue, inventory alerts</td><td>Operations management and fulfillment</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════ SLIDE 6 — DATABASES ══════════════════════════════ -->
+  <div class="slide bg-light" id="slide-6">
+    <div class="slide-inner">
+      <div class="slide-header">
+        <div>
+          <div class="slide-number">05 — Databases & DFD</div>
+          <div class="slide-title">Data Architecture</div>
+        </div>
+        <div class="slide-logo">Giftora</div>
+      </div>
+
+      <div class="grid-2">
+        <div>
+          <div class="card-label" style="margin-bottom:12px;">6 Core Databases</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div class="card">
+              <div style="font-size:20px;margin-bottom:6px;">📦</div>
+              <div class="card-label" style="font-size:9px;">Product DB</div>
+              <div class="card-desc">ID, SKU, Slug, Title, Price, Category, Images, Stock, Badge</div>
+            </div>
+            <div class="card">
+              <div style="font-size:20px;margin-bottom:6px;">👤</div>
+              <div class="card-label" style="font-size:9px;">Customer DB</div>
+              <div class="card-desc">Name, Email, Phone, Address, City, Order History</div>
+            </div>
+            <div class="card">
+              <div style="font-size:20px;margin-bottom:6px;">📋</div>
+              <div class="card-label" style="font-size:9px;">Order DB</div>
+              <div class="card-desc">Order ID, Line Items, Total KD, Status, Personalization Text</div>
+            </div>
+            <div class="card">
+              <div style="font-size:20px;margin-bottom:6px;">💳</div>
+              <div class="card-label" style="font-size:9px;">Payment DB</div>
+              <div class="card-desc">Method, Status, Ref ID, Amount, Timestamp</div>
+            </div>
+            <div class="card">
+              <div style="font-size:20px;margin-bottom:6px;">📊</div>
+              <div class="card-label" style="font-size:9px;">Inventory DB</div>
+              <div class="card-desc">SKU, Stock Level, Safety Margin, Restock Trigger</div>
+            </div>
+            <div class="card">
+              <div style="font-size:20px;margin-bottom:6px;">⭐</div>
+              <div class="card-label" style="font-size:9px;">Review DB</div>
+              <div class="card-desc">Rating, Text, Verified Purchase, Timestamp</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card-label" style="margin-bottom:12px;">Simplified Data Flow</div>
+          <div class="card" style="height:calc(100% - 30px);">
+            <div class="dfd" style="flex-direction:column;gap:12px;justify-content:center;">
+              <div style="display:flex;justify-content:center;gap:40px;">
+                <div class="dfd-entity">
+                  <div class="dfd-box dfd-ext">👤 Customer</div>
+                </div>
+                <div class="dfd-entity">
+                  <div class="dfd-box dfd-ext">🔧 Admin</div>
+                </div>
+              </div>
+              <div style="text-align:center;color:#aaa;font-size:24px;">↕ ↕</div>
+              <div style="display:flex;justify-content:center;">
+                <div class="dfd-box dfd-proc" style="font-size:13px;padding:16px 32px;">🌐 Website / App</div>
+              </div>
+              <div style="text-align:center;color:#aaa;font-size:24px;">↕ ↕ ↕</div>
+              <div style="display:flex;justify-content:center;gap:20px;flex-wrap:wrap;">
+                <div class="dfd-box dfd-db" style="font-size:11px;padding:10px 14px;">📦 Products</div>
+                <div class="dfd-box dfd-db" style="font-size:11px;padding:10px 14px;">📋 Orders</div>
+                <div class="dfd-box dfd-db" style="font-size:11px;padding:10px 14px;">👤 Customers</div>
+              </div>
+              <div style="text-align:center;color:#aaa;font-size:24px;">↕</div>
+              <div style="display:flex;justify-content:center;gap:20px;">
+                <div class="dfd-box" style="background:var(--accent);color:var(--ink);font-size:11px;padding:10px 16px;">💳 Payment</div>
+                <div class="dfd-box" style="background:var(--accent);color:var(--ink);font-size:11px;padding:10px 16px;">🚚 Delivery</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════ SLIDE 7 — DIGITAL MARKETING ══════════════════════════════ -->
+  <div class="slide bg-dark" id="slide-7">
+    <div class="slide-inner">
+      <div class="slide-header" style="border-color:rgba(255,255,255,0.08);">
+        <div>
+          <div class="slide-number" style="color:var(--dusty-rose);">06 — Digital Marketing Plan</div>
+          <div class="slide-title" style="color:#fff;">10,000 KD Budget Allocation</div>
+        </div>
+        <div class="slide-logo" style="color:#fff;">Giftora</div>
+      </div>
+
+      <div class="grid-2" style="flex:1;gap:32px;">
+        <div>
+          <div style="margin-bottom:20px;">
+            <div class="budget-row">
+              <div class="budget-label">📸 Instagram & TikTok Ads</div>
+              <div class="budget-bar-wrap"><div class="budget-bar" style="width:30%;background:var(--dusty-rose);"></div></div>
+              <div class="budget-kd">3,000 KD</div>
+            </div>
+            <div class="budget-row">
+              <div class="budget-label">🤝 Influencer Marketing</div>
+              <div class="budget-bar-wrap"><div class="budget-bar" style="width:25%;background:#C17A67cc;"></div></div>
+              <div class="budget-kd">2,500 KD</div>
+            </div>
+            <div class="budget-row">
+              <div class="budget-label">🔍 Google Search Ads</div>
+              <div class="budget-bar-wrap"><div class="budget-bar" style="width:20%;background:#A67C52;"></div></div>
+              <div class="budget-kd">2,000 KD</div>
+            </div>
+            <div class="budget-row">
+              <div class="budget-label">🎬 Content Creation</div>
+              <div class="budget-bar-wrap"><div class="budget-bar" style="width:12%;background:#8B7355;"></div></div>
+              <div class="budget-kd">1,200 KD</div>
+            </div>
+            <div class="budget-row">
+              <div class="budget-label">📧 Email / SMS Campaigns</div>
+              <div class="budget-bar-wrap"><div class="budget-bar" style="width:8%;background:#6B5743;"></div></div>
+              <div class="budget-kd">800 KD</div>
+            </div>
+            <div class="budget-row">
+              <div class="budget-label">🎁 Promo & Discount Codes</div>
+              <div class="budget-bar-wrap"><div class="budget-bar" style="width:5%;background:#4a3f38;"></div></div>
+              <div class="budget-kd">500 KD</div>
+            </div>
+          </div>
+          <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:16px;display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:12px;color:rgba(255,255,255,0.4);">Total Budget</span>
+            <span style="font-family:'Playfair Display',serif;font-size:28px;color:var(--dusty-rose);">10,000 KD</span>
+          </div>
+        </div>
+        <div>
+          <div style="margin-bottom:16px;">
+            <div class="card-label" style="color:rgba(255,255,255,0.4);margin-bottom:12px;">KPIs — How We Measure Success</div>
+            <div class="kpi-grid">
+              <div class="kpi">
+                <div class="kpi-icon">🌐</div>
+                <div class="kpi-val">5K+</div>
+                <div class="kpi-name">Monthly Visitors</div>
+              </div>
+              <div class="kpi">
+                <div class="kpi-icon">📈</div>
+                <div class="kpi-val">3.5%</div>
+                <div class="kpi-name">Conversion Rate</div>
+              </div>
+              <div class="kpi">
+                <div class="kpi-icon">🛍</div>
+                <div class="kpi-val">175+</div>
+                <div class="kpi-name">Orders / Month</div>
+              </div>
+              <div class="kpi">
+                <div class="kpi-icon">💰</div>
+                <div class="kpi-val">8 KD</div>
+                <div class="kpi-name">Cost Per Customer</div>
+              </div>
+              <div class="kpi">
+                <div class="kpi-icon">❤️</div>
+                <div class="kpi-val">12K+</div>
+                <div class="kpi-name">Social Engagement</div>
+              </div>
+              <div class="kpi">
+                <div class="kpi-icon">🔄</div>
+                <div class="kpi-val">35%</div>
+                <div class="kpi-name">Repeat Purchases</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════ SLIDE 8 — THANK YOU ══════════════════════════════ -->
+  <div class="slide slide-cover" id="slide-8">
+    <span class="cover-deco cover-deco-tl">✨</span>
+    <span class="cover-deco cover-deco-br">🎀</span>
+    <div style="position:relative;z-index:1;padding:40px;max-width:700px;margin:auto;text-align:center;">
+      <div class="cover-tag">Thank You</div>
+      <h1 class="cover-title" style="font-size:clamp(36px,6vw,72px);">Questions?</h1>
+      <p class="cover-sub">We're happy to walk you through any part of the Giftora experience — from the product pages to the admin dashboard.</p>
+      <div class="cover-badges">
+        <span class="badge">🌐 localhost:3000</span>
+        <span class="badge">📧 giftora@email.com</span>
+        <span class="badge">📸 @giftora.kuwait</span>
+      </div>
+      <div style="margin-top:40px;padding:24px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:16px;display:inline-block;">
+        <div style="font-size:11px;color:rgba(255,255,255,0.4);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px;">QMIS 351 — Section</div>
+        <div style="font-family:'Playfair Display',serif;color:#fff;font-size:18px;">Giftora E-Commerce Store</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:4px;">Presentation Date: July 19, 2026</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /presentation -->
+
+<!-- ── Navigation ── -->
+<div class="nav">
+  <button onclick="prevSlide()" aria-label="Previous">&#8592;</button>
+  <div class="dots" id="dots"></div>
+  <span class="counter" id="counter">1 / 8</span>
+  <button onclick="nextSlide()" aria-label="Next">&#8594;</button>
+</div>
+
+<script>
+  const TOTAL = 8;
+  let current = 1;
+
+  function render() {
+    document.querySelectorAll('.slide').forEach((s, i) => {
+      const active = i + 1 === current;
+      s.classList.toggle('active', active);
+    });
+    document.getElementById('counter').textContent = `${current} / ${TOTAL}`;
+    const dots = document.getElementById('dots');
+    dots.innerHTML = Array.from({ length: TOTAL }, (_, i) =>
+      `<div class="dot ${i + 1 === current ? 'active' : ''}" onclick="goTo(${i + 1})"></div>`
+    ).join('');
+  }
+
+  function nextSlide() { if (current < TOTAL) { current++; render(); } }
+  function prevSlide() { if (current > 1) { current--; render(); } }
+  function goTo(n) { current = n; render(); }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+    if (e.key === 'ArrowLeft') prevSlide();
+  });
+
+  render();
+</script>
+</body>
+</html>

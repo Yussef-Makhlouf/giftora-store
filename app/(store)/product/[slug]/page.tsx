@@ -7,6 +7,7 @@ import { products, getRelatedProducts } from '@/data/products'
 import { useCart } from '@/lib/cart-context'
 import ProductCard from '@/components/product/ProductCard'
 import OfferBanner from '@/components/product/OfferBanner'
+import { ProductReviews } from '@/components/product/ProductReviews'
 import { Minus, Plus, ShoppingBag, Heart, ChevronRight, Star, Shield, Truck, RotateCcw, Check, Share2, ZoomIn } from 'lucide-react'
 
 export default function ProductDetailPage() {
@@ -293,6 +294,9 @@ export default function ProductDetailPage() {
           </div>
         </section>
       )}
+
+      {/* Reviews */}
+      <ProductReviews productTitle={product.title} />
 
       {/* Related */}
       {related.length > 0 && (
