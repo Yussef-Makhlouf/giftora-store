@@ -50,11 +50,11 @@ export const productImages = {
   teaGiftSet2: 'https://images.pexels.com/photos/2361271/pexels-photo-2361271.jpeg?auto=compress&cs=tinysrgb&w=800',
   luxuryPen: 'https://images.unsplash.com/photo-1579710758621-2c0c8acb13e0?w=800&auto=format&fit=crop',
   miniGift: 'https://images.pexels.com/photos/157879/pexels-photo-157879.jpeg?auto=compress&cs=tinysrgb&w=800',
-  scarf: 'https://images.pexels.com/photos/4668103/pexels-photo-4668103.jpeg?auto=compress&cs=tinysrgb&w=800',
-  scarf2: 'https://images.pexels.com/photos/5547345/pexels-photo-5547345.jpeg?auto=compress&cs=tinysrgb&w=800',
+  scarf: 'https://m.media-amazon.com/images/I/51sdkTQ+sHL._AC_SY879_.jpg',
+  scarf2: 'https://m.media-amazon.com/images/I/51sdkTQ+sHL._AC_SY879_.jpg',
   bracelet: 'https://images.pexels.com/photos/8884950/pexels-photo-8884950.jpeg?auto=compress&cs=tinysrgb&w=800',
   bracelet2: 'https://images.pexels.com/photos/9104057/pexels-photo-9104057.jpeg?auto=compress&cs=tinysrgb&w=800',
-  giftCard: 'https://images.pexels.com/photos/10556289/pexels-photo-10556289.jpeg?auto=compress&cs=tinysrgb&w=800',
+  giftCard: 'https://m.media-amazon.com/images/I/41PVxo8ye5L._AC_.jpg',
 } as const
 
 
